@@ -37,7 +37,7 @@ do
     refresh_message="󰂯 Enable Bluetooth"
   fi 
 
-  device_selected=$(echo -e "$refresh_message" | sed 's/^..:..:..:..:..:.. //g' | rofi -replace -dmenu -i -p "Select a device") 
+  device_selected=$(echo -e "$refresh_message" | sed 's/^..:..:..:..:..:.. //g' | rofi -replace -dmenu -i -selected-row 1 -p "Select a device") 
 
   if [[ "$device_selected" =~ " Refresh" ]]; then
     refresh=true
