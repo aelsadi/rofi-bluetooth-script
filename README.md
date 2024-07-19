@@ -9,7 +9,7 @@ A script that allows bluetooth devices to be displayed and controlled in rofi
 - See currently connected and paired devices
 ## Dependencies 
 - Rofi
-- Blueman
+- bluez 
 - Libnotify
 - Nerd fonts (for icons)
 ## Setup
@@ -20,4 +20,5 @@ A script that allows bluetooth devices to be displayed and controlled in rofi
     bash "./script.sh"
     ```
 - Optional: add to $Path to allow it to be called from anywhere
-
+## Limitations
+- No device information (battery, etc.)

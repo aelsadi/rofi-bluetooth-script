@@ -2,9 +2,9 @@
 refresh=true
 
 connected_device_list=$(bluetoothctl devices Connected | sed 's/Device //g' | sed 's/./ 󰂱  /18')
-connected_device_mac=$(echo $connected_device_list | sed 's/ .*//g' )
+connected_device_mac=$(echo "$connected_device_list" | sed 's/ .*//g' )
 paired_device_list=$(bluetoothctl devices Paired | sed 's/Device //g' | sed 's/./   /18')
-paired_device_mac=$(echo $paired_device_list |  sed 's/ .*//g' )
+paired_device_mac=$(echo "$paired_device_list" |  sed 's/ .*//g' )
 
 while ($refresh == true) 
 do
@@ -29,7 +29,6 @@ do
     final_device_list="$connected_device_list\n$paired_device_list\n$device_list"
   fi
 
-
   connected=$(bluetoothctl show | grep 'PowerState')
   if [[ "$connected" =~ "PowerState: on" ]]; then
     refresh_message="󰂲 Disable Bluetooth\n Refresh\n$final_device_list"
@@ -41,8 +40,8 @@ do
 
   if [[ "$device_selected" =~ " Refresh" ]]; then
     refresh=true
-    bluetoothctl -t 3 scan on
     notify-send "Refreshing..."
+    bluetoothctl -t 3 scan on
   elif [[ "$device_selected" =~ "󰂯 Enable Bluetooth" ]]; then
     bluetoothctl power on 
     nofity-send "Bluetooth powered on"
@@ -57,10 +56,9 @@ if [[ "$device_selected" =~ "󰂲 Disable Bluetooth" ]]; then
   bluetoothctl power off
   nofity-send "Bluetooth powered off"
 elif [[ -n $device_selected ]]; then
-  echo $final_device_list
-  echo "$device_selected"
   device_mac=$(echo -e "$final_device_list" | grep "$device_selected" | sed 's/ .*//g')
-  device_name=$(echo -e "$final_device_list" | sed 's/^.* //g')
+  device_name=$(echo -e "$final_device_list" | grep "$device_selected" | sed 's/^.* //g')
+  echo $device_selected
   if [[ $( echo "$paired_device_mac" | grep "$device_mac" ) =~ "$device_mac" ]]; then
       if [[ $( echo "$connected_device_mac"| grep "$device_mac" ) =~ "$device_mac" ]]; then 
         paired="Disconnect\nForget"
@@ -79,29 +77,31 @@ elif [[ -n $device_selected ]]; then
 
   device_action=$(echo -e "$paired\n$trusted" | rofi -dmenu -i -p $device_name)
   if [[ "$device_action" =~ "Pair" ]]; then
+    bluetoothctl pairable on
     if bluetoothctl pair "$device_mac"; then
       if bluetoothctl connect "$device_mac"; then
-          notify-send "Bluetooth Connection" "Paired and connectted to $device_name"
+          notify-send "Bluetooth Connection" "Paired and connectted to $device_selected"
       else
-          notify-send "Bluetooth Connection" "Paired but unable to connect to $device_name"
+          notify-send "Bluetooth Connection" "Paired but unable to connect to $device_selected"
       fi
     else
-      notify-send "Pairing failed with $device_name"
+      notify-send "Pairing failed with $device_selected"
     fi
-  elif [[ "$device_action" =~ "Connect to" ]]; then
+    bluetoothctl pairable off
+  elif [[ "$device_action" =~ "Connect" ]]; then
     if bluetoothctl connect "$device_mac"; then
-        notify-send "Bluetooth Connection" "Successfully connected to $device_name"
+        notify-send "Bluetooth Connection" "Successfully connected to ${device_selected:3}"
     else
-        notify-send "Bluetooth Connection" "Failed to connect to $device_name"
+        notify-send "Bluetooth Connection" "Failed to connect to ${device_selected:3}"
     fi
-  elif [[ "$device_action" =~ "Disconnect from" ]]; then
-    bluetoothctl disconnect "$device_mac" && notify-send "Disconnected from $device_name"
+  elif [[ "$device_action" =~ "Disconnect" ]]; then
+    bluetoothctl disconnect "$device_mac" && notify-send "Disconnected from ${device_selected:3}"
   elif [[ "$device_action" =~ "Enable auto-connect" ]]; then
     bluetoothctl trust "$device_mac" && notify-send "Auto-connection enabled"
   elif [[ "$device_action" =~ "Disable auto-connect" ]]; then
     bluetoothctl untrust "$device_mac" && notify-send "Auto-connection disabled"
   elif [[ "$device_action" =~ "Forget" ]]; then
-    bluetoothctl remove "$device_mac" && notify-send "$device_name forgotten"
+    bluetoothctl remove "$device_mac" && notify-send "${device_selected:3} forgotten"
   else
     notify-send "No action seleted"
   fi
