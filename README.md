@@ -1,7 +1,7 @@
 # rofi-bluetooth-script
 A script that allows bluetooth devices to be displayed and controlled in rofi
-[image]
-[image]
+![](assets/main_menu_image.png)
+![](assets/actions_menu_image.png)
 ## Features
 - Toggle bluetooth on/off 
 - Pair, connect/disconnect and forget devices
