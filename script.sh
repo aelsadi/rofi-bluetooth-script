@@ -44,7 +44,7 @@ do
     bluetoothctl -t 3 scan on
   elif [[ "$device_selected" =~ "󰂯 Enable Bluetooth" ]]; then
     bluetoothctl power on 
-    nofity-send "Bluetooth powered on"
+    notify-send "Bluetooth powered on"
     refresh=true
   else
     refresh=false
@@ -54,7 +54,7 @@ done
 
 if [[ "$device_selected" =~ "󰂲 Disable Bluetooth" ]]; then
   bluetoothctl power off
-  nofity-send "Bluetooth powered off"
+  notify-send "Bluetooth powered off"
 elif [[ -n $device_selected ]]; then
   device_mac=$(echo -e "$final_device_list" | grep "$device_selected" | sed 's/ .*//g')
   device_name=$(echo -e "$final_device_list" | grep "$device_selected" | sed 's/^.* //g')
