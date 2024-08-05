@@ -1,14 +1,15 @@
 #!/bin/bash
 refresh=true
 
-connected_device_list=$(bluetoothctl devices Connected | sed 's/Device //g' | sed 's/./ 󰂱  /18')
-connected_device_mac=$(echo "$connected_device_list" | sed 's/ .*//g' )
-paired_device_list=$(bluetoothctl devices Paired | sed 's/Device //g' | sed 's/./   /18')
-paired_device_mac=$(echo "$paired_device_list" |  sed 's/ .*//g' )
 
 while ($refresh == true) 
 do
 
+  connected_device_list=$(bluetoothctl devices Connected | sed 's/Device //g' | sed 's/./ 󰂱  /18')
+  connected_device_mac=$(echo "$connected_device_list" | sed 's/ .*//g' )
+  paired_device_list=$(bluetoothctl devices Paired | sed 's/Device //g' | sed 's/./   /18')
+  paired_device_mac=$(echo "$paired_device_list" |  sed 's/ .*//g' )
+  
   device_list=$(bluetoothctl devices | sed '/..-..-..-..-..-../d' | sed 's/^.*Device //g' )
 
   for i in $paired_device_mac
