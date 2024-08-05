@@ -45,7 +45,8 @@ do
     bluetoothctl -t 3 scan on
   elif [[ "$device_selected" =~ "󰂯 Enable Bluetooth" ]]; then
     bluetooth on 
-    notify-send "Bluetooth powered on"
+    notify-send "Bluetooth powering on"
+    sleep 3
     refresh=true
   else
     refresh=false
